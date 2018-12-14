@@ -1,16 +1,16 @@
 {
   "persistence": "postgreSQL",
-  "platforms": ["fabric"],
+  "platforms": ["iroha"],
   "postgreSQL": {
     "host": "127.0.0.1",
     "port": "5432",
-    "database": "fabricexplorer",
-    "username": "hppoc",
-    "passwd": "password"
+    "database": "irohaexplorer",
+    "username": "test",
+    "passwd": "test"
   },
   "sync": {
     "type": "local",
-    "platform": "fabric",
+    "platform": "iroha",
     "blocksSyncTime": "3"
   }
 }

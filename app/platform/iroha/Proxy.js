@@ -2,14 +2,12 @@
     SPDX-License-Identifier: Apache-2.0
 */
 
-const chaincodeService = require('./service/chaincodeService.js');
 const helper = require('../../common/helper');
 
 const logger = helper.getLogger('Proxy');
 
 const ExplorerError = require('../../common/ExplorerError');
 
-const fabric_const = require('./utils/FabricConst').fabric.const;
 const explorer_error = require('../../common/ExplorerMessage').explorer.error;
 
 class Proxy {
@@ -20,66 +18,26 @@ class Proxy {
   }
 
   async getCurrentChannel() {
-    const client = await this.platform.getClient();
-    const channel = client.getDefaultChannel();
-    const channel_genesis_hash = client.getChannelGenHash(channel.getName());
-    let respose;
-    if (channel_genesis_hash) {
-      respose = { currentChannel: channel_genesis_hash };
-    } else {
-      respose = {
-        status: 1,
-        message: 'Channel not found in the Context ',
-        currentChannel: ''
-      };
-    }
-    logger.debug('getCurrentChannel >> %j', respose);
-    return respose;
+    console.log('##### Proxy getCurrentChannel called\n\n');
+    return {
+      currentChannel: 'default'
+    };
   }
 
   async loadChaincodeSrc(path) {
-    const respose = chaincodeService.loadChaincodeSrc(path);
-    logger.debug('loadChaincodeSrc >> %s', respose);
-    return respose;
+    console.log('##### Proxy loadChaincodeSrc called\n\n');
+    return '';
   }
 
   async getPeersStatus(channel_genesis_hash) {
-    const client = await this.platform.getClient();
-    const channel = client.getDefaultChannel();
-    const nodes = await this.persistence
-      .getMetricService()
-      .getPeerList(channel_genesis_hash);
-    let discover_results;
-    if (client.status) {
-      try {
-        discover_results = await client.initializeChannelFromDiscover(
-          channel._name
-        );
-      } catch (e) {}
-    }
-    const peers = [];
-    for (const node of nodes) {
-      if (node.peer_type === 'PEER') {
-        const res = await client.getPeerStatus(node);
-        node.status = res.status ? res.status : 'DOWN';
-        if (discover_results && discover_results.peers_by_org) {
-          const org = discover_results.peers_by_org[node.mspid];
-          for (const peer of org.peers) {
-            if (peer.endpoint.indexOf(node.server_hostname) > -1) {
-              node.ledger_height_low = peer.ledger_height.low;
-              node.ledger_height_high = peer.ledger_height.high;
-              node.ledger_height_unsigned = peer.ledger_height.unsigned;
-            }
-          }
-        }
-        peers.push(node);
-      }
-    }
-    logger.debug('getPeersStatus >> %j', peers);
+    console.log('##### Proxy getPeersStatus called\n\n');
+    // TODO: Should be able to return status of peer in the network
+    const peers = [{ status: 'RUNNING' }];
     return peers;
   }
 
   async changeChannel(channel_genesis_hash) {
+    console.log('##### Proxy changeChannel called\n\n');
     const client = this.platform.getClient();
     const respose = client.setDefaultChannelByHash(channel_genesis_hash);
     logger.debug('changeChannel >> %s', respose);
@@ -87,28 +45,22 @@ class Proxy {
   }
 
   async getChannelsInfo() {
-    const client = this.platform.getClient();
-    const channels = await this.persistence
-      .getCrudService()
-      .getChannelsInfo(client.getDefaultPeer().getName());
-    const currentchannels = [];
-    for (const channel of channels) {
-      const channel_genesis_hash = client.getChannelGenHash(
-        channel.channelname
-      );
-      if (
-        channel_genesis_hash &&
-        channel_genesis_hash === channel.channel_genesis_hash
-      ) {
-        currentchannels.push(channel);
+    return [
+      {
+        id: 3,
+        channelname: 'default',
+        blocks: 5,
+        channel_genesis_hash:
+          'e34544c6ed016c06ceec840bee65d04952d921494181cf497f5f77a9ff4ed819',
+        transactions: 5,
+        createdat: '2018-12-12T14:19:30.000Z',
+        channel_hash: ''
       }
-    }
-    logger.debug('getChannelsInfo >> %j', currentchannels);
-    console.log(currentchannels);
-    return currentchannels;
+    ];
   }
 
   async getTxByOrgs(channel_genesis_hash) {
+    console.log('##### Proxy getTxByOrgs called\n\n');
     const rows = await this.persistence
       .getMetricService()
       .getTxByOrgs(channel_genesis_hash);
@@ -129,6 +81,7 @@ class Proxy {
   }
 
   async getBlockByNumber(channel_genesis_hash, number) {
+    console.log('##### Proxy getBlockByNumber called\n\n');
     const client = this.platform.getClient();
     const channel = client.getChannelByHash(channel_genesis_hash);
 
@@ -146,45 +99,32 @@ class Proxy {
   }
 
   async createChannel(artifacts) {
+    console.log('##### Proxy createChannel called\n\n');
     const client = this.platform.getClient();
     const respose = await client.createChannel(artifacts);
     return respose;
   }
 
   async joinChannel(channelName, peers, orgName) {
+    console.log('##### Proxy joinChannel called\n\n');
     const client = this.platform.getClient();
     const respose = await client.joinChannel(channelName, peers, orgName);
     return respose;
   }
 
   getClientStatus() {
+    console.log('##### Proxy getClientStatus called\n\n');
     const client = this.platform.getClient();
     return client.getStatus();
   }
 
   async getChannels() {
-    const client = this.platform.getClient();
-    const client_channels = client.getChannelNames();
-    const channels = await this.persistence
-      .getCrudService()
-      .getChannelsInfo(client.getDefaultPeer().getName());
-    const respose = [];
-
-    for (let i = 0; i < channels.length; i++) {
-      const index = client_channels.indexOf(channels[i].channelname);
-      if (!(index > -1)) {
-        await this.platform
-          .getClient()
-          .initializeNewChannel(channels[i].channelname);
-      }
-      respose.push(channels[i].channelname);
-    }
-    logger.debug('getChannels >> %j', respose);
-    console.log(respose);
-    return respose;
+    console.log('##### Proxy getChannels called\n\n');
+    return ['default'];
   }
 
   processSyncMessage(msg) {
+    console.log('##### Proxy processSyncMessage called\n\n');
     // get message from child process
     logger.debug('Message from child %j', msg);
     if (fabric_const.NOTITY_TYPE_NEWCHANNEL === msg.notify_type) {

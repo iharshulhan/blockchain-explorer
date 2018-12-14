@@ -1,0 +1,41 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "admin": {
+          "name": "admin@test",
+          "adminPrivateKey": {
+            "path": "/Users/iharshulhan/iroha/iroha/example/admin@test.priv"
+          },
+          "adminPublicKey": {
+            "path": "/Users/iharshulhan/iroha/iroha/example/admin@test.pub"
+          }
+        }
+      },
+      "domains": {
+        "test": {
+          "name": "admin",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/Users/iharshulhan/iroha/iroha/example"
+          },
+          "adminPublicKey": {
+            "path": "/Users/iharshulhan/iroha/iroha/example"
+          }
+        }
+      },
+      "peers": {
+        "localhost:50051": {}
+      },
+      "orderers": {
+        "orderer.example.com": {
+          "url": "grpcs://localhost:7050"
+        }
+      }
+    },
+    "network-2": {}
+  },
+  "configtxgenToolPath": "/Users/iharshulhan/fabric-samples/bin",
+  "license": "Apache-2.0"
+}

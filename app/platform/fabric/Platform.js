@@ -50,8 +50,8 @@ class Platform {
     await this.buildClients(network_configs);
 
     if (
-      this.networks.size == 0
-      && this.networks.get(this.defaultNetwork).size == 0
+      this.networks.size == 0 &&
+      this.networks.get(this.defaultNetwork).size == 0
     ) {
       logger.error(
         '************* There is no client found for Hyperledger fabric platform *************'
@@ -96,7 +96,7 @@ class Platform {
         let client;
 
         if (clientstatus) {
-          client = await FabricUtils.createFabricClient(
+          client = await FabricUtils.createIrohaClient(
             client_configs,
             client_name,
             this.persistence

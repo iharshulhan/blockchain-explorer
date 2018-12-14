@@ -81,7 +81,7 @@ class SyncPlatform {
 
     this.client_configs = await FabricUtils.setOrgEnrolmentPath(client_configs);
 
-    this.client = await FabricUtils.createFabricClient(
+    this.client = await FabricUtils.createIrohaClient(
       this.client_configs,
       this.client_name
     );

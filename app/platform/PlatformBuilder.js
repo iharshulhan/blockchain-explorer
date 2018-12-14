@@ -1,6 +1,6 @@
 /*
-*SPDX-License-Identifier: Apache-2.0
-*/
+ *SPDX-License-Identifier: Apache-2.0
+ */
 
 const explorer_const = require('../common/ExplorerConst').explorer.const;
 const explorer_error = require('../common/ExplorerMessage').explorer.error;
@@ -10,6 +10,11 @@ class PlatformBuilder {
   static async build(pltfrm, persistence, broadcaster) {
     if (pltfrm === explorer_const.PLATFORM_FABRIC) {
       const Platform = require('./fabric/Platform');
+      const platform = new Platform(persistence, broadcaster);
+      return platform;
+    }
+    if (pltfrm === explorer_const.PLATFORM_IROHA) {
+      const Platform = require('./iroha/Platform');
       const platform = new Platform(persistence, broadcaster);
       return platform;
     }
